@@ -58,7 +58,8 @@ public class Main {
                 // Get user-specific services that persist across sessions
                 CartService cartService = userDataManager.getCartService(username);
                 OrderService orderService = userDataManager.getOrderService(username);
-                CustomerInterface customerInterface = new CustomerInterface(bookService, cartService, orderService);
+                BrowsingHistory browsingHistory = userDataManager.getBrowsingHistory(username);
+                CustomerInterface customerInterface = new CustomerInterface(bookService, cartService, orderService, browsingHistory);
                 customerInterface.runCustomer();
             }
         } else {
@@ -94,7 +95,8 @@ public class Main {
             // Get user-specific services that persist across sessions
             CartService cartService = userDataManager.getCartService(username);
             OrderService orderService = userDataManager.getOrderService(username);
-            CustomerInterface customerInterface = new CustomerInterface(bookService, cartService, orderService);
+            BrowsingHistory browsingHistory = userDataManager.getBrowsingHistory(username);
+            CustomerInterface customerInterface = new CustomerInterface(bookService, cartService, orderService, browsingHistory);
             customerInterface.runCustomer();
         }
     }

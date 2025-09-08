@@ -5,12 +5,14 @@ public class CustomerInterface {
     private BookService bookService;
     private CartService cartService;
     private OrderService orderService;
+    private BrowsingHistory browsingHistory;
     private Scanner scanner;
     
-    public CustomerInterface(BookService bookService, CartService cartService, OrderService orderService) {
+    public CustomerInterface(BookService bookService, CartService cartService, OrderService orderService, BrowsingHistory browsingHistory) {
         this.bookService = bookService;
         this.cartService = cartService;
         this.orderService = orderService;
+        this.browsingHistory = browsingHistory;
         this.scanner = new Scanner(System.in);
     }
     
@@ -21,12 +23,14 @@ public class CustomerInterface {
             System.out.println("1. List books");
             System.out.println("2. List recommended books");
             System.out.println("3. Search book");
-            System.out.println("4. List Cart");
-            System.out.println("5. Add book to cart");
-            System.out.println("6. Remove book from cart");
-            System.out.println("7. Checkout / Place order");
-            System.out.println("8. List orders");
-            System.out.println("9. Go back");
+            System.out.println("4. View book details");
+            System.out.println("5. View recently browsed books");
+            System.out.println("6. List Cart");
+            System.out.println("7. Add book to cart");
+            System.out.println("8. Remove book from cart");
+            System.out.println("9. Checkout / Place order");
+            System.out.println("10. List orders");
+            System.out.println("11. Go back");
             System.out.print("Enter your choice: ");
             
             choice = scanner.nextInt();
@@ -43,21 +47,27 @@ public class CustomerInterface {
                     searchBook();
                     break;
                 case 4:
-                    listCart();
+                    viewBookDetails();
                     break;
                 case 5:
-                    addBookToCart();
+                    viewRecentlyBrowsedBooks();
                     break;
                 case 6:
-                    removeBookFromCart();
+                    listCart();
                     break;
                 case 7:
-                    checkout();
+                    addBookToCart();
                     break;
                 case 8:
-                    listOrders();
+                    removeBookFromCart();
                     break;
                 case 9:
+                    checkout();
+                    break;
+                case 10:
+                    listOrders();
+                    break;
+                case 11:
                     return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
@@ -191,6 +201,50 @@ public class CustomerInterface {
             }
         } else {
             System.out.println("Order cancelled.");
+        }
+    }
+    
+    private void viewBookDetails() {
+        System.out.print("Enter book ID to view details: ");
+        int bookId = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+        
+        Book book = bookService.findBookById(bookId);
+        if (book == null) {
+            System.out.println("Book not found with ID: " + bookId);
+            return;
+        }
+        
+        // Add book to browsing history
+        browsingHistory.addBook(book);
+        
+        // Display detailed book information
+        System.out.println("\n=== BOOK DETAILS ===");
+        System.out.println("ID: " + book.getId());
+        System.out.println("Title: " + book.getTitle());
+        System.out.println("Author: " + book.getAuthor());
+        System.out.println("Price: $" + String.format("%.2f", book.getPrice()));
+        System.out.println("Stock Quantity: " + book.getStockQuantity());
+        System.out.println("Availability: " + (book.isInStock() ? "In Stock" : "Out of Stock"));
+        System.out.println("Recommended: " + (book.isRecommended() ? "Yes" : "No"));
+        
+        System.out.println("\nBook has been added to your browsing history.");
+    }
+    
+    private void viewRecentlyBrowsedBooks() {
+        System.out.println("\n=== BROWSING HISTORY ===");
+        browsingHistory.displayHistory();
+        
+        if (!browsingHistory.isEmpty()) {
+            System.out.println("\nLinkedList Contents (Internal Structure):");
+            System.out.println("LinkedList<Book> history = " + browsingHistory.getHistory());
+            
+            System.out.print("\nWould you like to clear your browsing history? (y/n): ");
+            String choice = scanner.nextLine();
+            if (choice.toLowerCase().equals("y")) {
+                browsingHistory.clearHistory();
+                System.out.println("Browsing history cleared.");
+            }
         }
     }
     
