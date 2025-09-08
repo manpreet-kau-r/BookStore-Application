@@ -8,10 +8,19 @@ public class CartService {
     }
     
     public boolean addBookToCart(int bookId) {
+        return addBookToCart(bookId, 1);
+    }
+    
+    public boolean addBookToCart(int bookId, int quantity) {
         Book book = bookService.findBookById(bookId);
         if (book != null) {
-            cart.addBook(book);
-            return true;
+            try {
+                cart.addBook(book, quantity);
+                return true;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+                return false;
+            }
         }
         return false;
     }
@@ -38,5 +47,17 @@ public class CartService {
     
     public void displayCart() {
         System.out.println(cart.toString());
+    }
+    
+    public boolean validateCartStock() {
+        return cart.validateStock();
+    }
+    
+    public void processCartOrder() {
+        if (validateCartStock()) {
+            cart.processOrder();
+        } else {
+            throw new IllegalStateException("Cannot process order: insufficient stock for some items");
+        }
     }
 }

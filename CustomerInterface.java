@@ -76,6 +76,7 @@ public class CustomerInterface {
                                  " | Title: " + book.getTitle() + 
                                  " | Author: " + book.getAuthor() + 
                                  " | Price: $" + book.getPrice() +
+                                 " | Stock: " + book.getStockQuantity() +
                                  (book.isRecommended() ? " [RECOMMENDED]" : ""));
             }
         }
@@ -123,18 +124,33 @@ public class CustomerInterface {
     private void addBookToCart() {
         System.out.print("Enter book ID to add to cart: ");
         int bookId = scanner.nextInt();
-        scanner.nextLine(); // consume newline
         
         Book book = bookService.findBookById(bookId);
         if (book == null) {
             System.out.println("Book not found with ID: " + bookId);
+            scanner.nextLine(); // consume newline
             return;
         }
         
-        if (cartService.addBookToCart(bookId)) {
-            System.out.println("Book '" + book.getTitle() + "' added to cart successfully!");
+        if (!book.isInStock()) {
+            System.out.println("Sorry, '" + book.getTitle() + "' is out of stock.");
+            scanner.nextLine(); // consume newline
+            return;
+        }
+        
+        System.out.print("Enter quantity (available: " + book.getStockQuantity() + "): ");
+        int quantity = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+        
+        if (quantity <= 0) {
+            System.out.println("Quantity must be positive.");
+            return;
+        }
+        
+        if (cartService.addBookToCart(bookId, quantity)) {
+            System.out.println("Added " + quantity + " copies of '" + book.getTitle() + "' to cart successfully!");
         } else {
-            System.out.println("Failed to add book to cart.");
+            System.out.println("Failed to add book to cart. Please check stock availability.");
         }
     }
     

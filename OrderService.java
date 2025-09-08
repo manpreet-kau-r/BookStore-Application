@@ -15,6 +15,15 @@ public class OrderService {
             return null;
         }
         
+        // Validate stock before placing order
+        if (!cart.validateStock()) {
+            System.out.println("Order failed: Insufficient stock for some items in cart.");
+            return null;
+        }
+        
+        // Process the order (reduce stock)
+        cart.processOrder();
+        
         Order order = new Order(nextOrderId++, cart.getItems(), cart.getTotalPrice());
         orders.add(order);
         return order;

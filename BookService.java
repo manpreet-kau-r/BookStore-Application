@@ -12,11 +12,11 @@ public class BookService {
     }
     
     private void initializeBooks() {
-        booksList.add(new Book(nextId++, "The Great Gatsby", "F. Scott Fitzgerald", 12.99));
-        booksList.add(new Book(nextId++, "To Kill a Mockingbird", "Harper Lee", 14.99));
-        booksList.add(new Book(nextId++, "1984", "George Orwell", 13.99));
-        booksList.add(new Book(nextId++, "Pride and Prejudice", "Jane Austen", 11.99));
-        booksList.add(new Book(nextId++, "The Catcher in the Rye", "J.D. Salinger", 15.99));
+        booksList.add(new Book(nextId++, "The Great Gatsby", "F. Scott Fitzgerald", 12.99, 10));
+        booksList.add(new Book(nextId++, "To Kill a Mockingbird", "Harper Lee", 14.99, 15));
+        booksList.add(new Book(nextId++, "1984", "George Orwell", 13.99, 8));
+        booksList.add(new Book(nextId++, "Pride and Prejudice", "Jane Austen", 11.99, 12));
+        booksList.add(new Book(nextId++, "The Catcher in the Rye", "J.D. Salinger", 15.99, 5));
         
         // Set some books as recommended
         booksList.get(0).setRecommended(true);
@@ -60,7 +60,12 @@ public class BookService {
     }
     
     public boolean addBook(String title, String author, double price) {
-        Book newBook = new Book(nextId++, title, author, price);
+        Book newBook = new Book(nextId++, title, author, price, 0);
+        return booksList.add(newBook);
+    }
+    
+    public boolean addBook(String title, String author, double price, int stockQuantity) {
+        Book newBook = new Book(nextId++, title, author, price, stockQuantity);
         return booksList.add(newBook);
     }
     

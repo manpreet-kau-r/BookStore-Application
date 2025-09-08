@@ -1,18 +1,18 @@
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Order {
     private int orderId;
-    private List<Book> books;
+    private Map<Book, Integer> books;
     private double totalAmount;
     private LocalDateTime orderDate;
     private String status;
     
-    public Order(int orderId, List<Book> books, double totalAmount) {
+    public Order(int orderId, Map<Book, Integer> books, double totalAmount) {
         this.orderId = orderId;
-        this.books = new ArrayList<>(books);
+        this.books = new HashMap<>(books);
         this.totalAmount = totalAmount;
         this.orderDate = LocalDateTime.now();
         this.status = "Placed";
@@ -26,12 +26,12 @@ public class Order {
         this.orderId = orderId;
     }
     
-    public List<Book> getBooks() {
-        return new ArrayList<>(books);
+    public Map<Book, Integer> getBooks() {
+        return new HashMap<>(books);
     }
     
-    public void setBooks(List<Book> books) {
-        this.books = new ArrayList<>(books);
+    public void setBooks(Map<Book, Integer> books) {
+        this.books = new HashMap<>(books);
     }
     
     public double getTotalAmount() {
@@ -58,6 +58,14 @@ public class Order {
         this.status = status;
     }
     
+    public int getTotalItemCount() {
+        return books.values().stream().mapToInt(Integer::intValue).sum();
+    }
+    
+    public int getUniqueItemCount() {
+        return books.size();
+    }
+    
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -66,11 +74,19 @@ public class Order {
         sb.append("Date: ").append(orderDate.format(formatter)).append("\n");
         sb.append("Status: ").append(status).append("\n");
         sb.append("Books:\n");
-        for (Book book : books) {
+        for (Map.Entry<Book, Integer> entry : books.entrySet()) {
+            Book book = entry.getKey();
+            int quantity = entry.getValue();
+            double itemTotal = book.getPrice() * quantity;
+            
             sb.append("  - ").append(book.getTitle())
               .append(" by ").append(book.getAuthor())
-              .append(" ($").append(book.getPrice()).append(")\n");
+              .append(" ($").append(String.format("%.2f", book.getPrice()))
+              .append(") x ").append(quantity)
+              .append(" = $").append(String.format("%.2f", itemTotal))
+              .append("\n");
         }
+        sb.append("Total Items: ").append(getTotalItemCount()).append("\n");
         sb.append("Total Amount: $").append(String.format("%.2f", totalAmount));
         return sb.toString();
     }

@@ -64,6 +64,7 @@ public class AdminInterface {
                                  " | Title: " + book.getTitle() + 
                                  " | Author: " + book.getAuthor() + 
                                  " | Price: $" + book.getPrice() +
+                                 " | Stock: " + book.getStockQuantity() +
                                  " | Recommended: " + (book.isRecommended() ? "Yes" : "No"));
             }
         }
@@ -164,10 +165,18 @@ public class AdminInterface {
         
         System.out.print("Enter book price: ");
         double price = scanner.nextDouble();
+        
+        System.out.print("Enter stock quantity: ");
+        int stockQuantity = scanner.nextInt();
         scanner.nextLine(); // consume newline
         
-        if (bookService.addBook(title, author, price)) {
-            System.out.println("Book added successfully!");
+        if (stockQuantity < 0) {
+            System.out.println("Stock quantity cannot be negative.");
+            return;
+        }
+        
+        if (bookService.addBook(title, author, price, stockQuantity)) {
+            System.out.println("Book added successfully with " + stockQuantity + " units in stock!");
         } else {
             System.out.println("Failed to add book.");
         }
